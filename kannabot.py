@@ -21,7 +21,7 @@ class kannabot:
         #address stuff for irc
         self.server = 'irc.oulu.fi'
         self.port = 6667
-        self.username = 'kannadan'
+        self.username = 'kannabot'
         self.realname = '-'
         self.nick = 'kannabot'
 
@@ -31,7 +31,7 @@ class kannabot:
         self.commands = botcommands.command_dict
 
         self.done = 0
-        self.channel = '#kannabot'
+        self.channel = '#otit.place'
 
         #socket to java GUI that sends coordinate messages to irc through kannabot
 
@@ -58,7 +58,6 @@ class kannabot:
     def check(self, line):
 
         print line
-        line = line.split(' ')
 
         # respond to ping
         if line[0] == 'PING':
@@ -91,10 +90,11 @@ class kannabot:
 
             ready_socks, _, _ = select.select(socks, [], [])
             for sock in ready_socks:
-                data, addr = sock.recvfrom(1024)  # This is will not block
+                data, addr = sock.recvfrom(1024)
                 data = data.split('\r\n')
                 for line in data:
-                    if line[2:7] == "!move":
+                    line = line.split(" ")
+                    if line[0][2:7] == "!move":
                         print ("made a move")
                         print ("%s-%s %s" % (line[1], line[3], line[4]))
                         if time.time() - waitStart >= 1:
@@ -106,11 +106,13 @@ class kannabot:
             for i in range(len(moves)):
                 if time.time() - waitStart >= 1:
                     waitStart = time.time()
-                    self.commands[':!say'].main(self, "%s-%s %s" % (line[1], line[3], line[4]))
+                    move = moves.pop()
+                    self.commands[':!say'].main(self, move)
                 else:
                     time.sleep(1)
                     waitStart = time.time()
-                    self.commands[':!say'].main(self, "%s-%s %s" % (line[1], line[3], line[4]))
+                    move = moves.pop()
+                    self.commands[':!say'].main(self, move)
 
 
             """
