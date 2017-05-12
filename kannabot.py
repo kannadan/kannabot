@@ -10,6 +10,9 @@ import socket
 import botcommands
 import select
 import time
+import threading
+import Queue
+import sys
 
 
 class kannabot:
@@ -19,7 +22,7 @@ class kannabot:
         self.users = [':kannadan!kannadan@otitsun.oulu.fi']
 
         #address stuff for irc
-        self.server = 'irc.oulu.fi'
+        self.server = 'irc.inet.fi'
         self.port = 6667
         self.username = 'kannabot'
         self.realname = '-'
@@ -31,18 +34,20 @@ class kannabot:
         self.commands = botcommands.command_dict
 
         self.done = 0
-        self.channel = '#otit.place'
+        self.channel = '#kannabot'
 
         #socket to java GUI that sends coordinate messages to irc through kannabot
 
         self.soc = socket.socket()  # Create a socket object
         self.host = "localhost"  # Get local machine name
         self.portS = 2004  # Reserve a port for your service.
-        self.soc.bind((self.host, self.portS))  # Bind to the port
-        print ("socket ready")
-        self.soc.listen(5)  # Now wait for client connection.
+        self.conn = None
+        self.messages = Queue.Queue()
+        self.socks = []
 
-        self.conn, addr = self.soc.accept()  # Establish connection with client.
+        self.socketdummy1 = socket.socket()
+        self.socketdummy2 = socket.socket()
+
 
     def send(self, string):
 
@@ -54,6 +59,27 @@ class kannabot:
         self.send('NICK %s' % self.nick)
         self.send('USER %s a a :%s' % (self.username, self.realname))
         self.send('JOIN %s' % self.channel)
+        self.soc.bind((self.host, self.portS))
+        self.soc.listen(5)
+
+        self.socketdummy2.bind((socket.gethostname(), 2001))
+        self.socketdummy2.listen(1)
+
+
+    def connectGUI(self):
+        print("Gui listener active")
+        self.socketdummy1.connect((socket.gethostname(), 2001))
+        while not self.done:
+            self.conn, addr = self.soc.accept()
+            print("Connected to user")
+            self.socks.append(self.conn)
+            self.socketdummy1.send("staph")
+        self.socketdummy1.close()
+        self.socketdummy2.close()
+
+
+
+
 
     def check(self, line):
 
@@ -79,55 +105,58 @@ class kannabot:
 
             pass
 
-    def mainloop(self):
-
-        buffer = ''
-        socks = [self.conn, self.socket]
-        moves = []
-        waitStart = 0
+    def listener(self):
+        print("listener active")
+        self.socks.append(self.socket)
+        connd, add = self.socketdummy2.accept()
+        self.socks.append(connd)
 
         while not self.done:
-
-            ready_socks, _, _ = select.select(socks, [], [])
+            ready_socks, _, _ = select.select(self.socks, [], [])
             for sock in ready_socks:
-                data, addr = sock.recvfrom(1024)
-                data = data.split('\r\n')
-                for line in data:
-                    line = line.split(" ")
-                    if line[0][2:7] == "!move":
-                        print ("made a move")
-                        print ("%s-%s %s" % (line[1], line[3], line[4]))
-                        if time.time() - waitStart >= 1:
-                            waitStart = time.time()
-                            self.commands[':!say'].main(self, "%s-%s %s" % (line[1], line[3], line[4]))
-                        else:
-                            moves.insert(0, "%s-%s %s" % (line[1], line[3], line[4]))
-                    self.check(line)
-            for i in range(len(moves)):
-                if time.time() - waitStart >= 1:
-                    waitStart = time.time()
-                    move = moves.pop()
-                    self.commands[':!say'].main(self, move)
+                try:
+                    data, addr = sock.recvfrom(1024)
+                    data = data.split('\r\n')
+                    for line in data:
+                        if line != "" and line != " ":
+                            self.messages.put(line)
+                except socket.error:
+                    self.socks.remove(sock)
+
+
+    def speaker(self):
+        lastmsg = 0
+        print("speaker active")
+        while not self.done:
+            line = self.messages.get()
+            self.messages.task_done()
+            print (line)
+            line = line.split(" ")
+            if line[0][2:7] == "!move":
+                print ("made a move")
+                print ("%s-%s %s" % (line[1], line[3], line[4]))
+                if time.time() - lastmsg >= 1:
+                    lastmsg = time.time()
+                    self.commands[':!say'].main(self, "%s-%s %s" % (line[1], line[3], line[4]))
                 else:
                     time.sleep(1)
-                    waitStart = time.time()
-                    move = moves.pop()
-                    self.commands[':!say'].main(self, move)
+                    self.commands[':!say'].main(self, "%s-%s %s" % (line[1], line[3], line[4]))
+                    lastmsg = time.time()
+            self.check(line)
+        sys.exit()
 
 
-            """
-            buffer += self.socket.recv(4096)
-            buffer = buffer.split('\r\n')
 
-            for line in buffer[0:-1]:
-                self.check(line)
+    def mainloop(self):
 
-            buffer = buffer[-1]
+        thread1 = threading.Thread(target=self.speaker)
+        thread2 = threading.Thread(target=self.listener)
+        thread3 = threading.Thread(target=self.connectGUI)
+        thread1.start()
+        thread2.start()
+        thread3.start()
 
-            print ("java check")
-            msg = self.conn.recv(1024)
-            self.commands[':!say'].main(self, msg[2:])
-            print (msg[2:])"""
+
 
 if __name__ == '__main__':
     irc = kannabot()

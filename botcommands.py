@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 command_dict = {}
-
+import socket
 
 class Hello:
 
@@ -21,12 +21,14 @@ class Quit:
 
             irc.send( 'QUIT' )
             irc.socket.close()
+            socket.socket().connect(("localhost", irc.portS))
+            irc.soc.close()
             irc.done = 1
 command_dict[ ':!quit' ] = Quit()
 
 class Say:
 
     def main(self, irc, msg):
-        irc.send('PRIVMSG %s :%s' % ("#otit.place", msg))
+        irc.send('PRIVMSG %s :%s' % ("#kannabot", msg))
 
 command_dict[ ':!say' ] = Say()
