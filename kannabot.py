@@ -62,7 +62,7 @@ class kannabot:
         self.soc.bind((self.host, self.portS))
         self.soc.listen(5)
 
-        self.socketdummy2.bind((socket.gethostname(), 2001))
+        self.socketdummy2.bind((socket.gethostname(), 2016))
         self.socketdummy2.listen(1)
 
 
