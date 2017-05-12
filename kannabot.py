@@ -40,7 +40,7 @@ class kannabot:
 
         self.soc = socket.socket()  # Create a socket object
         self.host = "localhost"  # Get local machine name
-        self.portS = 2004  # Reserve a port for your service.
+        self.portS = 2015  # Reserve a port for your service.
         self.conn = None
         self.messages = Queue.Queue()
         self.socks = []
