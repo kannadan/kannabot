@@ -22,7 +22,7 @@ class kannabot:
         self.users = [':kannadan!kannadan@otitsun.oulu.fi']
 
         #address stuff for irc
-        self.server = 'irc.inet.fi'
+        self.server = 'irc.oulu.fi'
         self.port = 6667
         self.username = 'kannabot'
         self.realname = '-'
@@ -89,8 +89,6 @@ class kannabot:
         if line[0] == 'PING':
             self.send('PONG :abc')
 
-
-
         try:
 
             # private messages
@@ -120,8 +118,10 @@ class kannabot:
                     for line in data:
                         if line != "" and line != " ":
                             self.messages.put(line)
-                except socket.error:
+                except socket.error:        #if connection is lost. mostly for the GUI
                     self.socks.remove(sock)
+            if len(self.socks) == o:
+                self.done = 1
 
 
     def speaker(self):

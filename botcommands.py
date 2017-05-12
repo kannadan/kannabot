@@ -15,7 +15,7 @@ class Quit:
 
     def main( self, irc , line ):
 
-        # määritellään komento vain pääkäyttäjille
+        # usr has to be main one
 
         if line[0] in irc.users:
 
