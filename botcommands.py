@@ -21,9 +21,11 @@ class Quit:
 
             irc.send( 'QUIT' )
             socket.socket().connect(("localhost", irc.portS))
+            irc.done = 1
             irc.socket.close()
             irc.soc.close()
-            irc.done = 1
+            print ("quit")
+
 command_dict[ ':!quit' ] = Quit()
 
 class Say:
