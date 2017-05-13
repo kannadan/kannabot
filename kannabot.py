@@ -40,7 +40,7 @@ class kannabot:
 
         self.soc = socket.socket()  # Create a socket object
         self.host = "otitsun.oulu.fi"
-        self.portS = 2015  # Reserve a port for your service.
+        self.portS = 2014  # Reserve a port for your service.
         self.conn = None
         self.messages = Queue.Queue()
         self.socks = []
@@ -60,7 +60,7 @@ class kannabot:
         self.send('USER %s a a :%s' % (self.username, self.realname))
         self.send('JOIN %s' % self.channel)
         self.soc.bind((self.host, self.portS))
-        self.soc.listen()
+        self.soc.listen(5)
 
         self.socketdummy2.bind((socket.gethostname(), 2016))
         self.socketdummy2.listen(1)
