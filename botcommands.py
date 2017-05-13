@@ -20,8 +20,8 @@ class Quit:
         if line[0] in irc.users:
 
             irc.send( 'QUIT' )
-            irc.socket.close()
             socket.socket().connect(("localhost", irc.portS))
+            irc.socket.close()
             irc.soc.close()
             irc.done = 1
 command_dict[ ':!quit' ] = Quit()
