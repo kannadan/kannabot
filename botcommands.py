@@ -20,7 +20,7 @@ class Quit:
         if line[0] in irc.users:
 
             irc.send( 'QUIT' )
-            socket.socket().connect(("localhost", irc.portS))
+            socket.socket().connect(("otitsun.oulu.fi", irc.portS))
             irc.done = 1
             irc.socket.close()
             irc.soc.close()
