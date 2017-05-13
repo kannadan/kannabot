@@ -23,7 +23,7 @@ class kannabot:
         self.users = [':kannadan!kannadan@otitsun.oulu.fi']
 
         #address stuff for irc
-        self.server = 'irc.oulu.fi'
+        self.server = 'irc.inet.fi'
         self.port = 6667
         self.username = 'kannabot'
         self.realname = '-'
