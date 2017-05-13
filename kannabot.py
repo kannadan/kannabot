@@ -39,7 +39,7 @@ class kannabot:
         #socket to java GUI that sends coordinate messages to irc through kannabot
 
         self.soc = socket.socket()  # Create a socket object
-        self.host = "localhost"  # Get local machine name
+        self.host = "kannadan@otitsun.oulu.fi"  # Get local machine name
         self.portS = 2015  # Reserve a port for your service.
         self.conn = None
         self.messages = Queue.Queue()
