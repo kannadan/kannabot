@@ -76,6 +76,7 @@ class kannabot:
             self.socketdummy1.send("staph")
         self.socketdummy1.close()
         self.socketdummy2.close()
+        print ("Gui listener dead")
 
 
 
@@ -122,6 +123,7 @@ class kannabot:
                     self.socks.remove(sock)
             if len(self.socks) == 0:
                 self.done = 1
+        print("listener dead")
 
 
     def speaker(self):
@@ -143,6 +145,7 @@ class kannabot:
                     self.commands[':!say'].main(self, "%s-%s %s" % (line[1], line[3], line[4]))
                     lastmsg = time.time()
             self.check(line)
+        print ("speaker dead")
         sys.exit()
 
 
