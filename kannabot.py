@@ -41,7 +41,7 @@ class kannabot:
 
         self.soc = socket.socket()  # Create a socket object
         self.host = "otitsun.oulu.fi"
-        self.portS = 2014  # Reserve a port for your service.
+        self.portS = 57413  # Reserve a port for your service.
         self.conn = None
         self.messages = Queue.Queue()
         self.socks = []
