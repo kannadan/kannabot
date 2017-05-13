@@ -120,7 +120,7 @@ class kannabot:
                             self.messages.put(line)
                 except socket.error:        #if connection is lost. mostly for the GUI
                     self.socks.remove(sock)
-            if len(self.socks) == o:
+            if len(self.socks) == 0:
                 self.done = 1
 
 
