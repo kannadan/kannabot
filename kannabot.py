@@ -39,7 +39,7 @@ class kannabot:
         #socket to java GUI that sends coordinate messages to irc through kannabot
 
         self.soc = socket.socket()  # Create a socket object
-        self.host = "otitsun.oulu.fi"  # Get local machine name
+        self.host = "otitsun.oulu.fi"
         self.portS = 2015  # Reserve a port for your service.
         self.conn = None
         self.messages = Queue.Queue()
@@ -60,7 +60,7 @@ class kannabot:
         self.send('USER %s a a :%s' % (self.username, self.realname))
         self.send('JOIN %s' % self.channel)
         self.soc.bind((self.host, self.portS))
-        self.soc.listen(5)
+        self.soc.listen()
 
         self.socketdummy2.bind((socket.gethostname(), 2016))
         self.socketdummy2.listen(1)
@@ -121,6 +121,7 @@ class kannabot:
                             self.messages.put(line)
                 except socket.error:        #if connection is lost. mostly for the GUI
                     self.socks.remove(sock)
+                    sock.close()
             if len(self.socks) == 0:
                 self.done = 1
         print("listener dead")
