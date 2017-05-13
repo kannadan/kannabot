@@ -134,6 +134,10 @@ class kannabot:
             for sock in ready_socks:
                 try:
                     data, addr = sock.recvfrom(1024)
+                    print(data)
+                    if "!move" in data or "!Save" in data:
+                        print("found unruly bits \n")
+                        data = data[2:]
                     data = data.split('\r\n')
                     for line in data:
                         if line != "" and line != " ":
@@ -154,14 +158,14 @@ class kannabot:
             self.messages.task_done()
             print (line + "\n")
             line = line.split(" ")
-            if line[0][2:7] == "!move":
+            if line[0] == "!move":
                 print ("made a move")
                 print ("%s-%s %s" % (line[1], line[3], line[4]))
-                if time.time() - lastmsg >= 1:
+                if time.time() - lastmsg >= 2:
                     lastmsg = time.time()
                     self.commands[':!say'].main(self, "%s-%s %s" % (line[1], line[3], line[4]))
                 else:
-                    time.sleep(1)
+                    time.sleep(2)
                     self.commands[':!say'].main(self, "%s-%s %s" % (line[1], line[3], line[4]))
                     lastmsg = time.time()
             self.check(line)

@@ -42,7 +42,7 @@ class Piirra:
         file = open(("%s.txt" %msg[4]), "r")
         for line in file:
             irc.send('PRIVMSG %s :%s' % ("#kannabot", line))
-            time.sleep(1)
+            time.sleep(2)
 
 
 command_dict[ ':!piirra' ] = Piirra()
