@@ -2,6 +2,7 @@
 
 command_dict = {}
 import socket
+import time
 
 class Hello:
 
@@ -34,3 +35,14 @@ class Say:
         irc.send('PRIVMSG %s :%s' % ("#kannabot", msg))
 
 command_dict[ ':!say' ] = Say()
+
+class Piirra:
+
+    def main(self, irc, msg):
+        file = open(("%s.txt" %msg[4]), "r")
+        for line in file:
+            irc.send('PRIVMSG %s :%s' % ("#kannabot", line))
+            time.sleep(1)
+
+
+command_dict[ ':!piirra' ] = Piirra()

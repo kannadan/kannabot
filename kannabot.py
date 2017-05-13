@@ -23,7 +23,7 @@ class kannabot:
         self.users = [':kannadan!kannadan@otitsun.oulu.fi']
 
         #address stuff for irc
-        self.server = 'irc.oulu.fi'
+        self.server = 'irc.inet.fi'
         self.port = 6667
         self.username = 'kannabot'
         self.realname = '-'
@@ -40,7 +40,7 @@ class kannabot:
         #socket to java GUI that sends coordinate messages to irc through kannabot
 
         self.soc = socket.socket()  # Create a socket object
-        self.host = "otitsun.oulu.fi"
+        self.host = "localhost"
         self.portS = 2014  # Reserve a port for your service.
         self.conn = None
         self.messages = Queue.Queue()
@@ -48,6 +48,8 @@ class kannabot:
 
         self.socketdummy1 = socket.socket()
         self.socketdummy2 = socket.socket()
+
+        self.files = {}
 
 
     def send(self, string):
@@ -85,7 +87,7 @@ class kannabot:
 
     def check(self, line):
 
-        print line
+        print (line)
 
         # respond to ping
         if line[0] == 'PING':
@@ -94,12 +96,28 @@ class kannabot:
         try:
 
             # private messages
+            if "!Save" in line[0] or "!Save" in line[1]:
+                print("saving")
+                if line[4] == "STAPH":
+                    self.files[line[3]].write("%s %s\n" % (line[1], line[2]))
+                    print ("CLOSING FILE")
+                    self.files[line[3]].close()
+                    del self.files[line[4]]
 
+                elif line[3] in self.files:
+                    print("writing!!!")
+                    print("%s %s \n" %(line[1], line[3]))
+                    self.files[line[3]].write("%s %s\n" % (line[1], line[2]))
+                else:
+                    print ("OPENING FILE")
+                    self.files[line[3]] = open(("%s.txt" % line[3]), "w")
+                    self.files[line[3]].write("%s %s\n" % (line[1], line[2]))
             if line[2][0] != '#':
                 line[2] = line[0].split('!')[0][1:]
 
             # do a thing
             self.commands[line[3]].main(self, line)
+
 
         except:
 
@@ -134,7 +152,7 @@ class kannabot:
         while not self.done:
             line = self.messages.get()
             self.messages.task_done()
-            print (line)
+            print (line + "\n")
             line = line.split(" ")
             if line[0][2:7] == "!move":
                 print ("made a move")
