@@ -68,7 +68,7 @@ class kannabot:
 
     def connectGUI(self):
         print("Gui listener active")
-        self.socketdummy1.connect((socket.gethostname(), 2001))
+        self.socketdummy1.connect((socket.gethostname(), 2016))
         while not self.done:
             self.conn, addr = self.soc.accept()
             print("Connected to user")
