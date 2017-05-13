@@ -31,6 +31,6 @@ command_dict[ ':!quit' ] = Quit()
 class Say:
 
     def main(self, irc, msg):
-        irc.send('PRIVMSG %s :%s' % ("#kannabot", msg))
+        irc.send('PRIVMSG %s :%s' % ("#otit.place", msg))
 
 command_dict[ ':!say' ] = Say()
