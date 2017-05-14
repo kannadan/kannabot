@@ -5,8 +5,8 @@ import socket
 import time
 import os
 
-Channel = "#otit.place"
-floodtime = 1.5
+Channel = "#kannabot"
+floodtime = 2
 
 class Hello:
 

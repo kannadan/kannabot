@@ -28,7 +28,7 @@ class kannabot:
         self.username = 'kannabot'
         self.realname = '-'
         self.nick = 'kannabot'
-        self.floodtime = 1.5
+        self.floodtime = 2
 
         self.socket = socket.socket()
 
@@ -36,7 +36,7 @@ class kannabot:
         self.commands = botcommands.command_dict
 
         self.done = 0
-        self.channel = '#otit.place'
+        self.channel = '#kannabot'
 
         #socket to java GUI that sends coordinate messages to irc through kannabot
 
