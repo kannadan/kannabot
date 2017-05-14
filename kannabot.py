@@ -13,7 +13,7 @@ import time
 import threading
 import Queue
 import sys
-import SocketServer
+import os
 
 
 class kannabot:
@@ -23,11 +23,12 @@ class kannabot:
         self.users = [':kannadan!kannadan@otitsun.oulu.fi']
 
         #address stuff for irc
-        self.server = 'irc.inet.fi'
+        self.server = 'irc.oulu.fi'
         self.port = 6667
         self.username = 'kannabot'
         self.realname = '-'
         self.nick = 'kannabot'
+        self.floodtime = 1.5
 
         self.socket = socket.socket()
 
@@ -50,6 +51,11 @@ class kannabot:
         self.socketdummy2 = socket.socket()
 
         self.files = {}
+        self.doneFiles = []
+
+        for file in os.listdir("."):
+            if file.endswith(".txt"):
+                self.doneFiles.append(file[:-4])
 
 
     def send(self, string):
@@ -87,7 +93,6 @@ class kannabot:
 
     def check(self, line):
 
-        print (line)
 
         # respond to ping
         if line[0] == 'PING':
@@ -97,12 +102,14 @@ class kannabot:
 
             # private messages
             if "!Save" in line[0] or "!Save" in line[1]:
+                line[3] = self.checkName(line[3])
                 print("saving")
                 if line[4] == "STAPH":
                     self.files[line[3]].write("%s %s\n" % (line[1], line[2]))
                     print ("CLOSING FILE")
                     self.files[line[3]].close()
-                    del self.files[line[4]]
+                    del self.files[line[3]]
+                    self.doneFiles.append(line[3])
 
                 elif line[3] in self.files:
                     print("writing!!!")
@@ -135,9 +142,6 @@ class kannabot:
                 try:
                     data, addr = sock.recvfrom(1024)
                     print(data)
-                    if "!move" in data or "!Save" in data:
-                        print("found unruly bits \n")
-                        data = data[2:]
                     data = data.split('\r\n')
                     for line in data:
                         if line != "" and line != " ":
@@ -156,23 +160,26 @@ class kannabot:
         while not self.done:
             line = self.messages.get()
             self.messages.task_done()
-            print (line + "\n")
             line = line.split(" ")
             if line[0] == "!move":
                 print ("made a move")
-                print ("%s-%s %s" % (line[1], line[3], line[4]))
-                if time.time() - lastmsg >= 2:
+                print ("%s-%s %s\n" % (line[1], line[3], line[4]))
+                if time.time() - lastmsg >= self.floodtime:
                     lastmsg = time.time()
                     self.commands[':!say'].main(self, "%s-%s %s" % (line[1], line[3], line[4]))
                 else:
-                    time.sleep(2)
+                    time.sleep(self.floodtime)
                     self.commands[':!say'].main(self, "%s-%s %s" % (line[1], line[3], line[4]))
                     lastmsg = time.time()
             self.check(line)
         print ("speaker dead")
         sys.exit()
 
-
+    def checkName(self, name):
+        if name in self.doneFiles:
+            name = "%s_" % name
+            name = self.checkName(name)
+        return name
 
     def mainloop(self):
 
