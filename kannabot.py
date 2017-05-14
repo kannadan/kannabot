@@ -36,12 +36,12 @@ class kannabot:
         self.commands = botcommands.command_dict
 
         self.done = 0
-        self.channel = '#kannabot'
+        self.channel = '#otit.place'
 
         #socket to java GUI that sends coordinate messages to irc through kannabot
 
         self.soc = socket.socket()  # Create a socket object
-        self.host = "localhost"
+        self.host = "otitsun.oulu.fi"
         self.portS = 2014  # Reserve a port for your service.
         self.conn = None
         self.messages = Queue.Queue()
