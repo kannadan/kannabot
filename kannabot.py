@@ -57,6 +57,9 @@ class kannabot:
             if file.endswith(".txt"):
                 self.doneFiles.append(file[:-4])
 
+        self.saving = {}
+
+        self.colors = ["black", "white", "red", "blue", "yellow", "cyan", "magenta", "green"]
 
     def send(self, string):
 
@@ -119,6 +122,13 @@ class kannabot:
                     print ("OPENING FILE")
                     self.files[line[3]] = open(("%s.txt" % line[3]), "w")
                     self.files[line[3]].write("%s %s\n" % (line[1], line[2]))
+
+            if len(line) == 5 and line[0].split("!")[0] in self.saving:
+                if self.checkFormat(line[-2:]):
+                    print ("saving to file")
+                    name = line[0].split("!")
+                    self.saving[name[0]].append("%s %s" % (line[3][1:], line[4]))
+
             if line[2][0] != '#':
                 line[2] = line[0].split('!')[0][1:]
 
@@ -180,6 +190,22 @@ class kannabot:
             name = "%s_" % name
             name = self.checkName(name)
         return name
+
+    def checkFormat(self, line):
+        print "checking format"
+        if "-" in line[0]:
+            cordinates = line[0].split("-")
+            if len(cordinates) == 2:
+                cordinates = cordinates[0].split(":")[1], cordinates[1]
+                if botcommands.isInt(cordinates[0]) and botcommands.isInt(cordinates[1]):
+                    print cordinates
+                    x = int(cordinates[0])
+                    y = int (cordinates[1])
+                    if x < 54 and x >= 0 and y < 72 and y >= 0:
+                        if line[1] in self.colors:
+                            return True
+        return False
+
 
     def mainloop(self):
 

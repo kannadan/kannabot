@@ -93,6 +93,68 @@ class Help():
 
 command_dict[ ':!help' ] = Help()
 
+class Save():
+
+    def main(self, irc, line):
+
+        if len(line) == 5:
+            username = line[0].split("!")
+            username = username[0]
+            if username not in irc.saving:
+                name = line[4]
+                irc.saving[username] = [name]
+                irc.send('PRIVMSG %s :%s' % (Channel, "Saving"))
+
+        else:
+            irc.send('PRIVMSG %s :%s' % (Channel, "!save <file name>"))
+
+command_dict[':!save'] = Save()
+
+class Done():
+
+    def main(self, irc, line):
+
+        username = line[0].split("!")
+        username = username[0]
+        if username in irc.saving:
+            print "username checks out"
+            moves = irc.saving[username]
+            name = irc.checkName(moves[0])
+            del moves[0]
+            xMin = 53
+            yMin = 71
+            for i in range(len(moves)):
+                jono = moves[i].split(" ")
+                jono = jono[0].split("-")
+                x = int(jono[0])
+                y = int(jono[1])
+                if x < xMin:
+                    xMin = x
+                if y < yMin:
+                    yMin = y
+
+            for i in range(len(moves)):
+                jono = moves[i].split(" ")
+                color = jono[1]
+                jono = jono[0].split("-")
+                x = int(jono[0])
+                y = int(jono[1])
+                x = x-xMin
+                y = y-yMin
+                moves[i] = "%d-%d %s" %(x, y, color)
+            file = open(("%s.txt" %name), "w")
+            for i in range(len(moves)):
+                file.write("%s\n" % moves[i])
+            file.close()
+            irc.send('PRIVMSG %s :%s' % (Channel, "picture saved"))
+            irc.doneFiles.append(name)
+            del irc.saving[username]
+
+        else:
+            irc.send('PRIVMSG %s :%s' % (Channel, "You are not saving anything"))
+
+command_dict[':!done'] = Done()
+
 def isInt(s):
     try:
         int(s)
