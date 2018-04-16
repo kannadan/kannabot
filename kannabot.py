@@ -36,7 +36,7 @@ class kannabot:
         self.commands = botcommands.command_dict
 
         self.done = 0
-        self.channel = '#otit.place'
+        self.channel = '#kannabot'
 
         #socket to java GUI that sends coordinate messages to irc through kannabot
 
@@ -211,10 +211,10 @@ class kannabot:
 
         thread1 = threading.Thread(target=self.speaker)
         thread2 = threading.Thread(target=self.listener)
-        thread3 = threading.Thread(target=self.connectGUI)
+        #thread3 = threading.Thread(target=self.connectGUI)
         thread1.start()
         thread2.start()
-        thread3.start()
+        #thread3.start()
 
 
 
