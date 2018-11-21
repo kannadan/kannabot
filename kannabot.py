@@ -36,20 +36,20 @@ class kannabot:
         self.commands = botcommands.command_dict
 
         self.done = 0
-        self.channel = '#kannabot'
+        self.channel = '#otit.place'
 
         #socket to java GUI that sends coordinate messages to irc through kannabot
-
+        """
         self.soc = socket.socket()  # Create a socket object
-        self.host = "otitsun.oulu.fi"
-        self.portS = 2014  # Reserve a port for your service.
+        self.host = "127.0.0.1"
+        self.portS = 5014  # Reserve a port for your service.
         self.conn = None
-        self.messages = Queue.Queue()
-        self.socks = []
 
         self.socketdummy1 = socket.socket()
         self.socketdummy2 = socket.socket()
-
+        """
+        self.messages = Queue.Queue()
+        self.socks = []
         self.files = {}
         self.doneFiles = []
 
@@ -71,11 +71,11 @@ class kannabot:
         self.send('NICK %s' % self.nick)
         self.send('USER %s a a :%s' % (self.username, self.realname))
         self.send('JOIN %s' % self.channel)
-        self.soc.bind((self.host, self.portS))
+        """self.soc.bind((self.host, self.portS))
         self.soc.listen(5)
 
         self.socketdummy2.bind((socket.gethostname(), 2016))
-        self.socketdummy2.listen(1)
+        self.socketdummy2.listen(1)"""
 
 
     def connectGUI(self):
@@ -84,7 +84,7 @@ class kannabot:
         while not self.done:
             self.conn, addr = self.soc.accept()
             print("Connected to user")
-            self.socks.append(self.conn)
+            #self.socks.append(self.conn)
             self.socketdummy1.send("staph")
         self.socketdummy1.close()
         self.socketdummy2.close()
@@ -143,8 +143,8 @@ class kannabot:
     def listener(self):
         print("listener active")
         self.socks.append(self.socket)
-        connd, add = self.socketdummy2.accept()
-        self.socks.append(connd)
+        #connd, add = self.socketdummy2.accept()
+        #self.socks.append(connd)
 
         while not self.done:
             ready_socks, _, _ = select.select(self.socks, [], [])
