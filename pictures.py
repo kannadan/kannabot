@@ -45,12 +45,18 @@ def colorize(pic, inverted = 0, black = 0):
 
         pic = Image.merge('RGBA', (r2,g2,b2,a))
 
+    elif pic.mode != "RGBA":
+        pic = pic.convert("RGBA")
+
     img = pic.load()
     picArray = []
 
     for y in range(height):
         line = []
         for x in range(width):
+            if img[x,y][3] == 0:
+                line.append("empty")
+                continue
             pixel = img[x,y][:3]
             distances = {}
             for color in colors:
@@ -72,7 +78,8 @@ def colorize(pic, inverted = 0, black = 0):
 
 
 if __name__ == "__main__":
-    pic = Image.open("otit3.png")
+    pic = Image.open("bowsette2.png")
+    print pic.mode
     #pic.show()
     pic = resize(pic)
     colorize(pic, 0 ,1)

@@ -47,6 +47,8 @@ class Piirra:
     def main(self, irc, msg):
         files = []
         photos = []
+        invert = 0
+        black = 0
         for file in os.listdir("."):
             if file.endswith(".txt"):
                 files.append(file[:-4])
@@ -56,10 +58,10 @@ class Piirra:
             irc.send('PRIVMSG %s :%s' % (Channel, "!piirra <name of drawing> <starting x> <starting y>"))
             irc.send('PRIVMSG %s :%s' % (Channel, "-show shows a list of drawings"))
         elif len(msg) == 5 and msg[4] == "-show":
-            irc.send('PRIVMSG %s :%s' % (Channel, files))
+            irc.send('PRIVMSG %s :%s, %s' % (Channel, files, photos))
 
         elif not isInt(msg[5]) or not isInt(msg[6]):    # if numbers not numbers
-            irc.send('PRIVMSG %s :%s' % (Channel, "!piirra cordinates must be numbers"))
+            irc.send('PRIVMSG %s :%s' % (Channel, "!piirra coordinates must be numbers"))
         elif int(msg[5]) > 53 or int(msg[5]) < 0 or int(msg[6]) > 71 or int(msg[6]) < 0:   #if numbers not on screen
             irc.send('PRIVMSG %s :%s' % (Channel, "!piirra drawing isn't on the screen"))
         elif len(msg) == 7 or len(msg) == 9 or len(msg) == 10 or len(msg) == 11:
@@ -74,7 +76,7 @@ class Piirra:
                     y = int(coordinates[1]) + int(msg[6])
                     if x > 54 or y > 71:
                         send = 0
-                        irc.send('PRIVMSG %s :%s' % (Channel, "!piirra, Drawing doesn't fit. gimme better cordinates"))
+                        irc.send('PRIVMSG %s :%s' % (Channel, "!piirra, Drawing doesn't fit. gimme better coordinates"))
                         break
                     else:
                         moves.append("%d-%d %s" %(x,y, line[1]))
@@ -122,11 +124,13 @@ class Piirra:
                 y = iy + int(msg[6])
                 if x > 54 or y > 71:
                     send = 0
-                    irc.send('PRIVMSG %s :%s' % (Channel, "!piirra, Drawing doesn't fit. gimme better cordinates"))
+                    irc.send('PRIVMSG %s :%s' % (Channel, "!piirra, Drawing doesn't fit. gimme better coordinates"))
                 else:
                     img = pictures.colorize(img, invert, black)
                     for y2 in range(iy):
                         for x2 in range(ix):
+                            if img[y2][x2] == "empty":
+                                continue
                             moves.append("%d-%d %s" %(x2+startx,y2+starty, img[y2][x2]))
                 file.close()
 

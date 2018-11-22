@@ -136,8 +136,8 @@ class kannabot:
             self.commands[line[3]].main(self, line)
 
 
-        except:
-
+        except Exception as e:
+            print e
             pass
 
     def listener(self):
